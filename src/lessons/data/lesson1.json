@@ -1,0 +1,40 @@
+{
+  "id": "1",
+  "title": "Excel as a Grid",
+  "level": 1,
+  "description": "Why rows and columns? Understanding the coordinate system.",
+  "steps": [
+    {
+      "id": "s1",
+      "type": "narrative",
+      "text": "# Welcome to the Grid\n\nImagine a city. To find a specific house, you need an address, like \"5th Avenue, 3rd Street\".\n\nExcel works the same way. It's a giant map of data, organized into **Columns** (letters like A, B, C) and **Rows** (numbers like 1, 2, 3).\n\nEvery box is called a **Cell**, and it has a unique address."
+    },
+    {
+      "id": "s2",
+      "type": "mcq",
+      "prompt": "If you are in Column C and Row 5, what is the address of that cell?",
+      "options": [
+        { "id": "opt1", "label": "5C" },
+        { "id": "opt2", "label": "C5" },
+        { "id": "opt3", "label": "Column 5, Row C" }
+      ],
+      "correctOptionId": "opt2",
+      "explanation": "Correct! In Excel, we always say the Column letter first, then the Row number. Think of it like the game Battleship."
+    },
+    {
+      "id": "s3",
+      "type": "gridInteraction",
+      "prompt": "Let's find a cell.",
+      "goalDescription": "Click on cell B3 (Column B, Row 3) and type the number 10.",
+      "initialGrid": {},
+      "expectedCells": {
+        "B3": 10
+      }
+    },
+    {
+      "id": "s4",
+      "type": "narrative",
+      "text": "### Why does this matter?\n\nBecause once every piece of data has an address, we can tell Excel to 'go fetch the value at address B3'.\n\nThis is the foundation of formulas, which we will explore next."
+    }
+  ]
+}
