@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { McqOption } from '../types/lesson';
 import { clsx } from 'clsx';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, ChevronRight } from 'lucide-react';
 
 interface StepMcqProps {
   prompt: string;
@@ -19,9 +19,7 @@ export const StepMcq: React.FC<StepMcqProps> = ({ prompt, options, correctOption
   const handleSubmit = () => {
     if (!selected) return;
     setSubmitted(true);
-    if (selected === correctOptionId) {
-      setTimeout(onComplete, 2000); // Auto advance after explanation
-    }
+    // Removed auto-advance logic
   };
 
   const isCorrect = selected === correctOptionId;
@@ -83,6 +81,21 @@ export const StepMcq: React.FC<StepMcqProps> = ({ prompt, options, correctOption
               <button onClick={() => { setSubmitted(false); setSelected(null); }} className="mt-2 text-sm underline">Try again</button>
           )}
         </motion.div>
+      )}
+
+      {submitted && isCorrect && (
+          <motion.div
+             initial={{ opacity: 0 }}
+             animate={{ opacity: 1 }}
+             className="pt-4"
+          >
+              <button
+                onClick={onComplete}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors font-semibold"
+              >
+                Continue <ChevronRight size={20} />
+              </button>
+          </motion.div>
       )}
     </div>
   );
