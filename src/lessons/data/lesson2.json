@@ -1,0 +1,41 @@
+{
+  "id": "2",
+  "title": "Formulas & The Balance Sheet",
+  "level": 2,
+  "description": "How Excel thinks about money: Inputs, Outputs, and Math.",
+  "steps": [
+    {
+      "id": "s1",
+      "type": "narrative",
+      "text": "# The Magic of Equals (=)\n\nIn math class, you write `2 + 2 = 4`. The equals sign comes at the *end*.\n\nBut in Excel, you are telling the cell what to *become*. So you start with the equals sign.\n\n`= 2 + 2` tells the cell: \"Hey, calculate this for me!\""
+    },
+    {
+      "id": "s2",
+      "type": "gridInteraction",
+      "prompt": "Try a calculation.",
+      "goalDescription": "In cell A1, type a formula to add 5 and 5. (Hint: start with =)",
+      "initialGrid": {},
+      "expectedCells": {
+        "A1": 10
+      }
+    },
+    {
+      "id": "s3",
+      "type": "narrative",
+      "text": "### Referencing Cells\n\nHard-coding numbers like `=5+5` is boring. The real power comes from pointing to other cells.\n\nIf you have income in A1 and expenses in A2, your profit is `=A1 - A2`.\n\nWhen A1 changes, the profit updates instantly. This is called **Recalculation**."
+    },
+    {
+      "id": "s4",
+      "type": "gridInteraction",
+      "prompt": "Calculate Profit",
+      "goalDescription": "Cell A1 has your Income (100). Cell A2 has your Expenses (40). In cell A3, write a formula to subtract Expenses from Income.",
+      "initialGrid": {
+        "A1": { "id": "A1", "value": 100 },
+        "A2": { "id": "A2", "value": 40 }
+      },
+      "expectedCells": {
+        "A3": 60
+      }
+    }
+  ]
+}
