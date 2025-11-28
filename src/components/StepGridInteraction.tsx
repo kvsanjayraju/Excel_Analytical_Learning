@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import type { GridState, CellValue } from '../types/lesson';
 import { Grid } from './Grid';
 import { evaluateGrid } from '../lib/gridUtils';
+import { ChevronRight } from 'lucide-react';
+import { clsx } from 'clsx';
 
 interface StepGridInteractionProps {
   prompt: string;
@@ -19,22 +21,13 @@ export const StepGridInteraction: React.FC<StepGridInteractionProps> = ({
   onComplete
 }) => {
   const [currentGrid, setCurrentGrid] = useState<GridState>(initialGrid);
-  const [success, setSuccess] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   useEffect(() => {
     setCurrentGrid(evaluateGrid(initialGrid));
   }, [initialGrid]);
 
   const handleCellChange = (id: string, value: string) => {
-    // Grid component handles internal state and evaluation for display
-    // We need to update our local state to check for correctness
-    // Note: Grid calls onCellChange with the raw input value (formula or literal)
-
-    // We need to reconstruct the grid logic locally or trust the Grid component to pass back the full state?
-    // The Grid component in my implementation keeps its own state and just notifies of changes.
-    // This is a bit disjointed. Better if Grid was fully controlled or exposed its state.
-    // For now, let's update our local copy.
-
     const isFormula = value.startsWith('=');
     const updatedCell = {
         ...currentGrid[id],
@@ -44,18 +37,23 @@ export const StepGridInteraction: React.FC<StepGridInteractionProps> = ({
     };
 
     const nextGrid = { ...currentGrid, [id]: updatedCell };
-    const evaluated = evaluateGrid(nextGrid); // Re-evaluate everything
+    const evaluated = evaluateGrid(nextGrid);
     setCurrentGrid(evaluated);
-
-    checkCompletion(evaluated);
+    // Removed auto-check here
+    if (feedback?.type === 'error') {
+        setFeedback(null); // Clear error when user types
+    }
   };
 
-  const checkCompletion = (gridToCheck: GridState) => {
-    if (!expectedCells) return;
+  const handleCheckAnswer = () => {
+    if (!expectedCells) {
+        setFeedback({ type: 'success', message: "Great exploration! You can proceed." });
+        return;
+    }
 
     let allMatch = true;
     for (const [key, expectedVal] of Object.entries(expectedCells)) {
-      const cell = gridToCheck[key];
+      const cell = currentGrid[key];
       // loose equality for numbers/strings
       // eslint-disable-next-line eqeqeq
       if (cell?.value != expectedVal) {
@@ -65,8 +63,9 @@ export const StepGridInteraction: React.FC<StepGridInteractionProps> = ({
     }
 
     if (allMatch) {
-      setSuccess(true);
-      setTimeout(onComplete, 1500);
+      setFeedback({ type: 'success', message: "✅ Correct! Great job." });
+    } else {
+      setFeedback({ type: 'error', message: "❌ Not yet. Check the cell and try again." });
     }
   };
 
@@ -84,11 +83,36 @@ export const StepGridInteraction: React.FC<StepGridInteractionProps> = ({
         />
       </div>
 
-      {success && (
-        <div className="p-4 bg-green-100 text-green-800 rounded-lg animate-bounce">
-          Great job! That's correct.
-        </div>
-      )}
+      <div className="flex flex-col gap-4">
+          {feedback && (
+            <div className={clsx(
+                "p-4 rounded-lg",
+                feedback.type === 'success' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            )}>
+              {feedback.message}
+            </div>
+          )}
+
+          <div className="flex gap-4">
+              {feedback?.type !== 'success' && (
+                  <button
+                    onClick={handleCheckAnswer}
+                    className="px-6 py-3 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-colors font-semibold"
+                  >
+                    Check Answer
+                  </button>
+              )}
+
+              {feedback?.type === 'success' && (
+                  <button
+                    onClick={onComplete}
+                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors font-semibold"
+                  >
+                    Continue <ChevronRight size={20} />
+                  </button>
+              )}
+          </div>
+      </div>
     </div>
   );
 };
